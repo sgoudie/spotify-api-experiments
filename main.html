@@ -8,6 +8,11 @@
         font-family: helvetica, arial, sans-serif;
         margin-top: 40px;
       }
+      .artist-image {
+        max-height: 200px;
+        display: block;
+        margin: 10px auto;
+      }
     </style>
   </head>
   <body>
@@ -37,9 +42,12 @@
 
             response.json().then((data) => {
               const artist = data.artists.items[0];
-              const result = `${artist.name} - ${artist.followers.total} followers`;
-              console.log(result);
-              resultsPlaceholder.innerHTML = result;
+              console.log(artist);
+              resultsPlaceholder.innerHTML = (
+                `<img class="artist-image" src="${artist.images[0].url}" alt="${artist.name}"/>
+                <h3>${artist.name}</h3>
+                <p>${artist.followers.total} followers</p>`
+              );
             });
           })
           .catch((error) => {
