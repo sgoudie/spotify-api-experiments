@@ -1,0 +1,84 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Top Tracks</title>
+    <style>
+      .container {
+        text-align: center;
+        font-family: helvetica, arial, sans-serif;
+        margin-top: 40px;
+      }
+      .artist-image {
+        max-height: 200px;
+        display: block;
+        margin: 10px auto;
+      }
+      ul {
+        display: block;
+        margin: 10px auto;
+        list-style: none;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Search for an Artist</h1>
+      <form id="search-form">
+        <input type="text" id="query" value="" />
+        <input type="submit" id="search" value="Search" />
+      </form>
+      <div id="results"></div>
+    </div>
+    <script>
+      const resultsPlaceholder = document.getElementById('results');
+
+      const searchArtists = (query) => {
+        resultsPlaceholder.innerHTML = 'Searching...';
+        const artistRequest = `https://api.spotify.com/v1/search?q=${query}&type=artist&limit=1`;
+        const artistPromise = fetch(artistRequest);
+
+        artistPromise
+          .then((response) => {
+            if (response.status !== 200) {
+              console.log('Looks like there was a problem. Status Code: ' +
+                response.status);
+              return;
+            }
+            response.json().then((data) => data.artists.items[0])
+            .then((artist) => {
+              const tracksPromise = fetch(`https://api.spotify.com/v1/artists/${artist.id}/top-tracks?country=GB`);
+              tracksPromise.then((response) => {
+                response.json().then((data) => {
+                  console.log(data.tracks);
+                  data.tracks.forEach((track) => {
+                    console.log(track.name);
+                  });
+                  const renderResult = () => (
+                    `<img class="artist-image" src="${artist.images[0].url}" alt="${artist.name}"/>
+                    <h3>${artist.name}</h3>
+                    <p>${artist.followers.total} followers</p>
+                    <h5>Top Tracks (UK)</h5>
+                    <ul>
+                      ${data.tracks.map((track) => `<li>${track.name}</li>`).join('')}
+                    </ul>`
+                  );
+                  resultsPlaceholder.innerHTML = renderResult();
+                });
+              });
+            })
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
+
+      document.getElementById('search-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const query = document.getElementById('query').value;
+        if (query !== '') searchArtists(query);
+      }, false);
+
+    </script>
+  </body>
+</html>
