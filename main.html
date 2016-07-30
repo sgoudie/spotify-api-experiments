@@ -4,29 +4,46 @@
     <title>Spotify API Experiments</title>
   </head>
   <body>
+    <div class="container">
+      <h1>Search for an Artist</h1>
+      <form id="search-form">
+        <input type="text" id="query" value="" />
+        <input type="submit" id="search" value="Search" />
+      </form>
+      <div id="results"></div>
+    </div>
     <script>
+      const resultsPlaceholder = document.getElementById('results');
+
       const searchArtists = (query) => {
-      const request = `https://api.spotify.com/v1/search?q=${query}&type=artist&limit=1`;
-      const searchPromise = fetch(request);
+        const request = `https://api.spotify.com/v1/search?q=${query}&type=artist&limit=1`;
+        const searchPromise = fetch(request);
 
-      searchPromise
-        .then((response) => {
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' +
-              response.status);
-            return;
-          }
+        searchPromise
+          .then((response) => {
+            if (response.status !== 200) {
+              console.log('Looks like there was a problem. Status Code: ' +
+                response.status);
+              return;
+            }
 
-          response.json().then((data) => {
-            const artist = data.artists.items[0];
-            console.log(`${artist.name} - ${artist.followers.total} followers`);
+            response.json().then((data) => {
+              const artist = data.artists.items[0];
+              const result = `${artist.name} - ${artist.followers.total} followers`;
+              console.log(result);
+              resultsPlaceholder.innerHTML = result;
+            });
+          })
+          .catch((error) => {
+            console.log(error);
           });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
       };
-      searchArtists('david bowie');
+
+      document.getElementById('search-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        searchArtists(document.getElementById('query').value);
+      }, false);
+
     </script>
   </body>
 </html>
