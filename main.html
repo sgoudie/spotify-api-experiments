@@ -5,6 +5,28 @@
   </head>
   <body>
     <script>
+      const searchArtists = (query) => {
+      const request = `https://api.spotify.com/v1/search?q=${query}&type=artist&limit=1`;
+      const searchPromise = fetch(request);
+
+      searchPromise
+        .then((response) => {
+          if (response.status !== 200) {
+            console.log('Looks like there was a problem. Status Code: ' +
+              response.status);
+            return;
+          }
+
+          response.json().then((data) => {
+            const artist = data.artists.items[0];
+            console.log(`${artist.name} - ${artist.followers.total} followers`);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      };
+      searchArtists('david bowie');
     </script>
   </body>
 </html>
