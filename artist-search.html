@@ -57,7 +57,8 @@
 
       document.getElementById('search-form').addEventListener('submit', function (e) {
         e.preventDefault();
-        searchArtists(document.getElementById('query').value);
+        const query = document.getElementById('query').value;
+        if (query !== '') searchArtists(query);
       }, false);
 
     </script>
