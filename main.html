@@ -16,6 +16,7 @@
       const resultsPlaceholder = document.getElementById('results');
 
       const searchArtists = (query) => {
+        resultsPlaceholder.innerHTML = 'Searching...';
         const request = `https://api.spotify.com/v1/search?q=${query}&type=artist&limit=1`;
         const searchPromise = fetch(request);
 
